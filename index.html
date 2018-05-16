@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="description" content="Description">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <link rel="stylesheet" href="./_assets/vue.css">
+  <link rel="stylesheet" href="./_static/mermaid.min.css">
+  <script src="./_static/mermaid.min.js"></script>
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+    mermaid.initialize({ startOnLoad: false });
+    window.$docsify = {
+      auto2top: true,
+      coverpage: true,
+      executeScript: true,
+      loadSidebar: true,
+      loadNavbar: true,
+      mergeNavbar: true,
+      //noEmoji:true,
+      maxLevel: 1,
+      subMaxLevel: 1,
+      name: '',
+      search: {},
+      repo: 'http://localhost:3000',
+      formatUpdated: '{MM}/{DD} {HH}:{mm}',
+      //themeColor: '#f12345',//定义主题色，默认绿色
+      plugins: [
+        function (hook) {//让图片居中显示
+          hook.afterEach(function (html) {
+            return html.replace(/<p><img/g,'<p style="text-align:center"><img')//图片居中
+                       .replace(/class="mermaid"/g,'class="mermaid" style="text-align:center"')//让使用mermaid画流程图居中
+          })
+        }
+      ],
+      markdown: {
+        renderer: {
+          code: function(code, lang) {
+            if (lang === "mermaid") {
+              return (
+                '<div class="mermaid">' + mermaid.render(lang, code) + "</div>"
+              );
+            }
+            return this.origin.code.apply(this, arguments);
+          }
+        }
+      }
+    }
+  </script>
+  <script src="./_static/docsify.min.js"></script>
+  <script src="./_static/emoji.js"></script>
+  <script src="./_static/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
+</body>
+</html>
