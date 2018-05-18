@@ -8,6 +8,7 @@
   <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <link rel="stylesheet" href="./_assets/vue.css">
   <link rel="stylesheet" href="./_static/mermaid.min.css">
+  <style>.markdown-section{max-width:80% !important;}</style>
   <script src="./_static/mermaid.min.js"></script>
 </head>
 <body>
@@ -25,7 +26,10 @@
       maxLevel: 1,
       subMaxLevel: 1,
       name: '',
-      search: {},
+      search: {
+          placeholder: '搜索',
+          noData: '未找到结果'
+      },
       repo: 'http://localhost:3000',
       formatUpdated: '{MM}/{DD} {HH}:{mm}',
       //themeColor: '#f12345',//定义主题色，默认绿色
