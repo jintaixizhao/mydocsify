@@ -12,10 +12,10 @@
 .node circle,
 .node ellipse,
 .node polygon {
-  /* fill: #ECECFF;
-  stroke: #CCCCFF; */
-  fill:#f8f8f8!important;
-  stroke:var(--theme-color, #42b983)!important;
+  fill: #ECECFF;
+  stroke: #CCCCFF; 
+  /* fill:#f8f8f8!important;
+  stroke:var(--theme-color, #42b983)!important;*/
   stroke-width: 1px;
 }
 .arrowheadPath {
@@ -25,7 +25,6 @@
   stroke: #333333;
 }
 .edgeLabel {
-  /* background-color: var(--theme-color, #42b983);*/
   background-color: #fff!important;
 }
 .cluster rect {
