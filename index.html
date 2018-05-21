@@ -14,7 +14,7 @@
 <body>
   <div id="app"></div>
   <script>
-    mermaid.initialize({ startOnLoad: false });
+    //mermaid.initialize({ startOnLoad: true });
     window.$docsify = {
       auto2top: true,
       coverpage: true,
@@ -39,17 +39,25 @@
             return html.replace(/<p><img/g,'<p style="text-align:center"><img')//图片居中
                        .replace(/class="mermaid"/g,'class="mermaid" style="text-align:center"')//让使用mermaid画流程图居中
           })
+        },
+        function(hook, vm) {
+          hook.ready(function () {
+            mermaid.initialize({startOnLoad: false});
+          });
+          hook.doneEach(function () {
+            mermaid.init(undefined,'.mermaid');
+          });
         }
       ],
       markdown: {
         renderer: {
           code: function(code, lang) {
-            if (lang === "mermaid") {
-              return (
-                '<div class="mermaid">' + mermaid.render(lang, code) + "</div>"
-              );
+            var html = '';
+            if(code.match(/^sequenceDiagram/) || code.match(/^graph/) || code.match(/^gantt/)){
+              html = '<div class="mermaid">' + code + '</div>';
             }
-            return this.origin.code.apply(this, arguments);
+            var hl = Prism.highlight(code, Prism.languages[lang] || Prism.languages.markup)
+            return html + '<pre v-pre data-lang="' + lang + '"><code class="lang-' + lang + '">' + hl + '</code></pre>'
           }
         }
       }
