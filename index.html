@@ -51,9 +51,14 @@
       markdown: {
         renderer: {
           code: function(code, lang) {
-            var html = '';
+            var html = '',pre='';
             if(code.match(/^sequenceDiagram/) || code.match(/^graph/) || code.match(/^gantt/)){
               html = '<div class="mermaid">' + code + '</div>';
+              if(lang==="mermaidShow"){//如果想显示流程图的同时，显示其mermaid代码，可将代码的语言设置成mermaidShow，这是我自己定的，并不是标准。结果是丧失了在typora中的预览效果，所以lang的值，在编辑状态写mermaid，在保存用于docsify时写mermaidShow。
+                pre = '<pre v-pre data-lang="mermaid"><code class="lang-mermaid">' + Prism.highlight(code, Prism.languages['mermaid'] || Prism.languages.markup) + '</code></pre>'
+                return pre+html
+              }
+              return html
             }
             var hl = Prism.highlight(code, Prism.languages[lang] || Prism.languages.markup)
             return html + '<pre v-pre data-lang="' + lang + '"><code class="lang-' + lang + '">' + hl + '</code></pre>'
