@@ -1,76 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Document</title>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
-  <meta name="description" content="Description">
-  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-  <link rel="stylesheet" href="./_assets/vue.css">
-  <link rel="stylesheet" href="./_static/mermaid.min.css">
-  <style>.markdown-section{max-width:80% !important;}</style>
-  <script src="./_static/mermaid.min.js"></script>
-</head>
-<body>
-  <div id="app"></div>
-  <script>
-    window.$docsify = {
-      auto2top: true,
-      coverpage: true,
-      executeScript: true,
-      loadSidebar: true,
-      loadNavbar: false,
-      mergeNavbar: true,
-      //noEmoji:true,
-      maxLevel: 1,
-      subMaxLevel: 1,
-      name: '',
-      search: {
-          placeholder: '搜索',
-          noData: '未找到结果'
-      },
-      repo: 'http://localhost:3000',
-      formatUpdated: '{MM}/{DD} {HH}:{mm}',
-      //themeColor: '#f12345',//定义主题色，默认绿色
-      plugins: [
-        function (hook) {//让图片居中显示
-          hook.afterEach(function (html) {
-            return html.replace(/<p><img/g,'<p style="text-align:center"><img')//图片居中
-                       .replace(/class="mermaid"/g,'class="mermaid" style="text-align:center"')//让使用mermaid画流程图居中
-          })
-        },
-        function(hook, vm) {
-          hook.ready(function () {
-            mermaid.initialize({startOnLoad: false});
-          });
-          hook.doneEach(function () {
-            mermaid.init(undefined,'.mermaid');
-          });
-        }
-      ],
-      markdown: {
-        renderer: {
-          code: function(code, lang) {
-            var html = '',pre='';
-            if(code.match(/^sequenceDiagram/) || code.match(/^graph/) || code.match(/^gantt/)){
-              html = '<div class="mermaid">' + code + '</div>';
-              if(lang==="mermaidShow"){//如果想显示流程图的同时，显示其mermaid代码，可将代码的语言设置成mermaidShow，这是我自己定的，并不是标准。结果是丧失了在typora中的预览效果，所以lang的值，在编辑状态写mermaid，在保存用于docsify时写mermaidShow。
-                pre = '<pre v-pre data-lang="mermaid"><code class="lang-mermaid">' + Prism.highlight(code, Prism.languages['mermaid'] || Prism.languages.markup) + '</code></pre>'
-                return pre+html
-              }
-              return html
-            }
-            var hl = Prism.highlight(code, Prism.languages[lang] || Prism.languages.markup)
-            return html + '<pre v-pre data-lang="' + lang + '"><code class="lang-' + lang + '">' + hl + '</code></pre>'
-          }
-        }
-      }
-    }
-  </script>
-  <script src="./_static/docsify.min.js"></script>
-  <script src="./_static/search.min.js"></script>
-  <script src="./_static/emoji.js"></script>
-  <script src="./_static/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="description" content="Description">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <link rel="stylesheet" href="./_assets/vue.css">
+    <link rel="stylesheet" href="./_static/mermaid.min.css">
+    <style>
+    .markdown-section {
+        max-width: 80% !important;
+    }
+
+    .edit-btn {
+        color: #42b983;
+        font-weight: bold;
+        cursor: pointer
+    }
+
+    .edit-btn:hover {
+        color: #2e835c;
+    }
+    </style>
+    <script src="./_static/mermaid.min.js"></script>
+</head>
+
+<body>
+    <div id="app"></div>
+    <script>
+    const getURL = URL => {
+        return new Promise(function(resolve, reject) {
+            var req = new XMLHttpRequest();
+            req.open('GET', URL, true);
+            req.onload = function() {
+                if (req.status === 200) {
+                    resolve(req.responseText);
+                } else {
+                    reject(new Error(req.statusText));
+                }
+            };
+            req.onerror = function() {
+                reject(new Error(req.statusText));
+            };
+            req.send();
+        });
+    }
+
+    window.$docsify = {
+        auto2top: true,
+        coverpage: true,
+        executeScript: true,
+        loadSidebar: true,
+        loadNavbar: false,
+        mergeNavbar: true,
+        //noEmoji:true,
+        maxLevel: 1,
+        subMaxLevel: 1,
+        name: '',
+        search: {
+            placeholder: '搜索',
+            noData: '未找到结果'
+        },
+        repo: 'http://localhost:3000',
+        formatUpdated: '{YYYY}-{MM}-{DD} {HH}:{mm}:{ss}',
+        //themeColor: '#f12345',//定义主题色，默认绿色
+        plugins: [
+            function(hook, vm) { //让图片居中显示
+                hook.afterEach(function(html) {
+                    return html.replace(/<p><img/g, '<p style="text-align:center"><img') //图片居中
+                        .replace(/class="mermaid"/g, 'class="mermaid" style="text-align:center"') //让使用mermaid画流程图居中
+                });
+                hook.ready(function() {
+                    mermaid.initialize({ startOnLoad: false });
+                });
+                hook.beforeEach(function(md) {
+                console.log(vm);
+                    const filePath = decodeURIComponent(vm.route.file);
+
+                    const url = 'http://localhost:3001/a?file=' + filePath
+                    const editBtn = `<span onclick="getURL('${url}')" class="edit-btn">&emsp;编辑本页</span>\n`
+                    return md +
+                        '\n----\n' +
+                        '最后更新 {docsify-updated}' +
+                        editBtn
+                });
+                hook.doneEach(function() {
+                    mermaid.init(undefined, '.mermaid');
+                });
+            }
+        ],
+        markdown: {
+            renderer: {
+                code: function(code, lang) {
+                    let html = '',
+                        pre = '';
+                    if (code.match(/^sequenceDiagram/) || code.match(/^graph/) || code.match(/^gantt/)) {
+                        html = '<div class="mermaid">' + code + '</div>';
+                        if (lang === "mermaidShow") { //如果想显示流程图的同时，显示其mermaid代码，可将代码的语言设置成mermaidShow，这是我自己定的，并不是标准。结果是丧失了在typora中的预览效果，所以lang的值，在编辑状态写mermaid，在保存用于docsify时写mermaidShow。
+                            pre = '<pre v-pre data-lang="mermaid"><code class="lang-mermaid">' + Prism.highlight(code, Prism.languages['mermaid'] || Prism.languages.markup) + '</code></pre>'
+                            return pre + html
+                        }
+                        return html
+                    }
+                    let hl = Prism.highlight(code, Prism.languages[lang] || Prism.languages.markup)
+                    return html + '<pre v-pre data-lang="' + lang + '"><code class="lang-' + lang + '">' + hl + '</code></pre>'
+                }
+            }
+        }
+    }
+    </script>
+    <script src="./_static/docsify.min.js"></script>
+    <script src="./_static/search.min.js"></script>
+    <script src="./_static/emoji.js"></script>
+    <script src="./_static/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 </body>
+
 </html>
