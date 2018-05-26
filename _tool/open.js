@@ -8,7 +8,5 @@ http.createServer((req,res)=>{
 	const reqUrl = decodeURI(req.url).split("=").pop()
 	exec(rootPath+"/"+reqUrl)
 }).listen(port, function () {
-    console.log('WebServer running at http://127.0.0.1:'+port+'/');
+	console.log('WebServer running at http://127.0.0.1:'+port+'/');
 });
-
-
