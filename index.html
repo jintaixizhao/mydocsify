@@ -15,7 +15,7 @@
     }
 
     .edit-btn {
-        color: #42b983;
+        color: var(--theme-color, #42b983);
         font-weight: bold;
         cursor: pointer
     }
@@ -59,13 +59,13 @@
         maxLevel: 1,
         subMaxLevel: 1,
         name: '',
-        search: {
+        /*search: {
             placeholder: '搜索',
             noData: '未找到结果'
-        },
+        },*/
         repo: 'http://localhost:3000',
         formatUpdated: '{YYYY}-{MM}-{DD} {HH}:{mm}:{ss}',
-        //themeColor: '#f12345',//定义主题色，默认绿色
+        themeColor: '#e8186c',//定义主题色，默认绿色
         plugins: [
             function(hook, vm) { //让图片居中显示
                 hook.afterEach(function(html) {
@@ -89,6 +89,11 @@
                 hook.doneEach(function() {
                     mermaid.init(undefined, '.mermaid');
                 });
+                hook.beforeEach(function(content) {
+                  // 每次开始解析 Markdown 内容时调用
+                  // ...
+                  return content
+                })
             }
         ],
         markdown: {
@@ -112,7 +117,7 @@
     }
     </script>
     <script src="./_static/docsify.min.js"></script>
-    <script src="./_static/search.min.js"></script>
+    <!-- <script src="./_static/search.min.js"></script> -->
     <script src="./_static/emoji.js"></script>
     <script src="./_static/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 </body>
