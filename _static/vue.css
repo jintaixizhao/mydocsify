@@ -282,7 +282,7 @@ main.hidden {
 
 .sidebar .sidebar-nav {
     line-height: 2em;
-    padding-bottom: 40px
+    /* padding-bottom: 40px */
 }
 
 .sidebar li.collapse .app-sub-sidebar {
@@ -332,7 +332,7 @@ main.hidden {
 
 .sidebar-toggle {
     background-color: transparent;
-    background-color: hsla(0, 0%, 100%, .8);
+    /* background-color: hsla(0, 0%, 100%, .8); */
     border: 0;
     outline: none;
     padding: 10px;
@@ -341,8 +341,11 @@ main.hidden {
     left: 0;
     text-align: center;
     transition: opacity .3s;
-    width: 284px;
+    height:100%;
     z-index: 4
+}
+.sidebar-toggle .sidebar-toggle-button{
+    display:none;
 }
 
 .sidebar-toggle .sidebar-toggle-button:hover {
@@ -788,7 +791,7 @@ body {
 .markdown-section h4 a,
 .markdown-section h5 a,
 .markdown-section h6 a{
-	font-weight:600;
+    font-weight:600;
 }
 
 .markdown-section figure,
@@ -996,23 +999,23 @@ pre:after {
 
 /* by baizita */
 pre{
-	border:thin solid var(--theme-color, #42b983);
-	border-radius: 6px;
+    border:thin solid var(--theme-color, #42b983);
+    border-radius: 6px;
 }
 /* 强调文本显示红色 */
 .markdown-section strong{
-	color:#f12345;
+    color:#f12345;
 }
 /* 代码自动换行 */
 .markdown-section pre>code{
-	word-wrap: break-word;
+    word-wrap: break-word;
     white-space: pre-wrap;
     word-break: normal;
     padding: 1.2em 5px;
 }
 
 .markdown-section table{
-	display: table
+    display: table
 }
 
 .sidebar-nav hr{
