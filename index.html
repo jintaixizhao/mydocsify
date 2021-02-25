@@ -68,11 +68,17 @@
     const hideEmptyDailyRecordInCurrentSeason=()=>{
         const pnexth3s = [...document.querySelectorAll("h3+p")]
         pnexth3s.map((i,j)=>{
-            if(i.innerHTML=="&nbsp;"){
+            let dateELe = i.previousElementSibling
+            if(!isCurrentDate(dateELe.innerText)&&i.innerHTML=="&nbsp;"){
                 i.style.display="none"
-                i.previousElementSibling.style.display="none"
+                dateELe.style.display="none"
             }
         })
+        function isCurrentDate(text){
+            let dateArr = text.replace(/[年月]/g,"-").replace("日","").split("-").map(i=>Number(i))
+            let current = new Date()
+            return dateArr[0]===current.getFullYear()&&dateArr[1]===(current.getMonth()+1)&&dateArr[2]===current.getDate()
+        }
     }
 
     const setPageTitle=()=>{
