@@ -3,11 +3,11 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Document</title>
+    <title>baizita's palace</title>
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="description" content="Description">
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <link rel="stylesheet" href="./_assets/vue.css">
+    <link rel="stylesheet" href="./_static/vue.css">
     <link rel="stylesheet" href="./_static/mermaid.min.css">
     <style>
     .markdown-section {
@@ -23,12 +23,17 @@
     .edit-btn:hover {
         color: #2e835c;
     }
+
+    /* 跳到今天按钮 */
+    .to_current{position:fixed;right:0;top:90px;background:var(--theme-color, #42b983);border:thin solid transparent;border-radius:4px;color:#fff;cursor:pointer;padding:15px 10px;display:none;}
+    .to_current:hover{background:#fff;border:thin solid var(--theme-color, #42b983);color:var(--theme-color, #42b983);}
     </style>
     <script src="./_static/mermaid.min.js"></script>
 </head>
 
 <body>
     <div id="app"></div>
+    <div class="to_current" onClick="relocate()">跳到今天</div>
     <script>
     const getURL = URL => {
         return new Promise(function(resolve, reject) {
@@ -48,6 +53,35 @@
         });
     }
 
+    const relocate=()=>{
+        let href = location.href
+        let date = new Date()
+        let suffix = "?id=_"+date.getFullYear()+"年"+(date.getMonth()+1)+"月"+date.getDate()+"日"
+        let index = href.indexOf("?")
+        //如果不带参数，则下一行和下三行的结果是一样的；如果带了参数，则下一行和下三行的值不一样(下一行执行了没效果)，刚好实现了重定向，
+        location.href =href+suffix
+        if(index>=0){
+            location.href = href.slice(0,index)+suffix
+        }
+    }
+
+    const hideEmptyDailyRecordInCurrentSeason=()=>{
+        const pnexth3s = [...document.querySelectorAll("h3+p")]
+        pnexth3s.map((i,j)=>{
+            if(i.innerHTML=="&nbsp;"){
+                i.style.display="none"
+                i.previousElementSibling.style.display="none"
+            }
+        })
+    }
+
+    const setPageTitle=()=>{
+        const ele = document.querySelector("#main").firstElementChild
+        if(ele.tagName == "H3"){
+            document.title = ele.innerText
+        }
+    }
+
     window.$docsify = {
         auto2top: true,
         coverpage: true,
@@ -65,7 +99,8 @@
         },*/
         repo: 'http://localhost:3000',
         formatUpdated: '{YYYY}-{MM}-{DD} {HH}:{mm}:{ss}',
-        themeColor: 'rgb(51,133,255)',//'rgb(0,190,6)',//'#e8186c',//定义主题色，默认绿色
+        themeColor: '#108c3e',//'rgb(51,133,255)',//'rgb(0,190,6)',//'#e8186c',//定义主题色，默认绿色
+        //themeColor: ["#19CAAD", 'rgb(51,133,255)', 'rgb(0,190,6)', '#e8186c', "#ECAD9E", "#F4606C"][new Date().getDay()],
         plugins: [
             function(hook, vm) { //让图片居中显示
                 hook.afterEach(function(html) {
@@ -76,10 +111,9 @@
                     mermaid.initialize({ startOnLoad: false });
                 });
                 hook.beforeEach(function(md) {
-                console.log(vm);
                     const filePath = decodeURIComponent(vm.route.file);
-
-                    const url = 'http://localhost:3001/a?file=' + filePath
+                    //添加打开路径，由于将原服务集成于taotie中，所以无法再使用相对路径，故补全了绝对路径。
+                    const url = 'http://localhost:8464/open?url=E:/郭凡/PALACE/' + filePath
                     const editBtn = `<span onclick="getURL('${url}')" class="edit-btn">&emsp;编辑本页</span>\n`
                     return md +
                         '\n----\n' +
@@ -88,12 +122,53 @@
                 });
                 hook.doneEach(function() {
                     mermaid.init(undefined, '.mermaid');
+                    //无图模式的切换
+                    let showImage = localStorage.getItem("showImage"),
+                        imgs = document.querySelectorAll("img");
+                    if(showImage == null){
+                        imgs.forEach(i=>i.style.display="none")
+                    }else{
+                        imgs.forEach(i=>i.style.display="inline")
+                    }
+
+                    //监听图片模式，实现同源页面同步更新模式
+                    window.addEventListener("storage", function (e) {
+                        if(e.key === 'showImage'){
+                            if(e.newValue === null){
+                                imgs.forEach(i=>i.style.display="none")
+                            }else{
+                                imgs.forEach(i=>i.style.display="inline")
+                            }
+                        }
+                    });
+                    //监听图片模式结束
+
+                    //---------------------------------------
+                    //如果是首页，则默认收起左侧菜单栏
+                    document.body.classList[this.location.hash=="#/"?"add":"remove"]("close")
+                    if(/readmode=true/.test(location.hash)){
+                        document.body.classList.add("readmode")
+                    }
+                    //---------------------------------------
+
+                    //---------------------------------------
+                    //如果是LIST页，则出现跳转到当前日期处的按钮
+                    let _hash = this.location.hash
+                    let _index = _hash.indexOf("?")
+                    let hash = _index<0?_hash:_hash.slice(0,_index)
+                    let toCurrentBtn=document.querySelector(".to_current")
+                    if(hash=="#/Daily/"||hash=="#/Daily/README"){
+                        toCurrentBtn.style.display="block"
+                        document.title="本季记录"
+                        hideEmptyDailyRecordInCurrentSeason()
+                    }else{
+                        toCurrentBtn.style.display="none"
+                    }
+                    //---------------------------------------
+
+                    //设置title
+                    setPageTitle()
                 });
-                hook.beforeEach(function(content) {
-                  // 每次开始解析 Markdown 内容时调用
-                  // ...
-                  return content
-                })
             }
         ],
         markdown: {
@@ -119,8 +194,13 @@
     <script src="./_static/docsify.min.js"></script>
     <!-- <script src="./_static/search.min.js"></script> -->
     <script src="./_static/emoji.js"></script>
+    <!-- <script src="./_static/zoom-image.js"></script> -->
+    <script src="./_static/zoom-image.min.js"></script>
     <script src="./_static/docsify-copy-code.min.js"></script>
     <script src="./_static/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script src="./_static/ctc.js"></script>
+    <script src="./_static/hotkeys.min.js"></script>
+    <script src="./_static/shiftImgMode.js"></script>
 </body>
 
 </html>

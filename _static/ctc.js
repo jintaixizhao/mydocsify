@@ -1,4 +1,4 @@
-//ctc : click to copy
+//ctc : click to copy, author:baizita, 2019年9月23日
 !(function(){
 	!function(o, e) { void 0 === e && (e = {}); var t = e.insertAt; if (o && "undefined" != typeof document) { var n = document.head || document.getElementsByTagName("head")[0],
 	            c = document.createElement("style");
@@ -9,7 +9,9 @@
 	document.body.onclick=function(e){ 
 		var copyedClassName = "ctc_copyed",
 	        target = e.target || window.event.target; 
-	    if (target.tagName == "TD" && target.innerText != "") { 
+	    //if (target.tagName == "TD"&& target.innerText != "") { 
+	    //解除只能在表格单元格中点击复制的限制，只要元素上设置了data-copy属性，其值为true，也能实现点击复制。
+	    if ((target.tagName == "TD"||target.getAttribute("data-copy")=="true") && target.innerText != "") { 
 	    	var classList = target.classList;
 	    	//对敏感信息，给td增加data-sec属性，复制的是此属性值，而不是td的文本。td的文本可以用其他内容代替，诸如*****
 	    	var sec = target.getAttribute("data-sec")
@@ -27,3 +29,18 @@
 	    } 
 	}
 })()
+
+Date.prototype.format = function(format) {
+    var o = {
+        'M+': this.getMonth() + 1,
+        'd+': this.getDate(),
+        'h+': this.getHours(),
+        'm+': this.getMinutes(),
+        's+': this.getSeconds(),
+        'q+': Math.floor((this.getMonth() + 3) / 3),
+        'S': this.getMilliseconds()
+    }
+    if (/(y+)/.test(format)) format = format.replace(RegExp.$, (this.getFullYear() + '').substr(4 - RegExp.$.length));
+    for (var k in o) if (new RegExp('(' + k + ')').test(format)) format = format.replace(RegExp.$, RegExp.$.length == 1 ? o[k] : ('00' + o[k]).substr(('' + o[k]).length));
+    return format;
+}
