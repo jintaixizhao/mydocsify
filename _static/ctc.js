@@ -7,28 +7,38 @@
 	textarea.id="copy"
 	document.body.appendChild(textarea);
 	document.body.onclick=function(e){ 
-		var copyedClassName = "ctc_copyed",
-	        target = e.target || window.event.target; 
+		var target = e.target || window.event.target; 
 	    //if (target.tagName == "TD"&& target.innerText != "") { 
 	    //解除只能在表格单元格中点击复制的限制，只要元素上设置了data-copy属性，其值为true，也能实现点击复制。
-	    if ((target.tagName == "TD"||target.getAttribute("data-copy")=="true") && target.innerText != "") { 
-	    	var classList = target.classList;
-	    	//对敏感信息，给td增加data-sec属性，复制的是此属性值，而不是td的文本。td的文本可以用其他内容代替，诸如*****
+	    var dataCopy = target.getAttribute("data-copy")
+	    if (target.tagName == "TD"||dataCopy=="true") { 
+	    	//对敏感信息，给被点击元素增加data-sec属性，复制的是此属性值，而不是元素的文本。元素的文本可以用其他内容代替，诸如*****
 	    	var sec = target.getAttribute("data-sec")
-	        textarea.value = sec?sec:target.innerText;
-	        textarea.select();
-	        document.execCommand("Copy"); 
-	        if (classList.contains(copyedClassName)) { 
-	        	classList.remove(copyedClassName);
-	            setTimeout(function() { 
-	            	classList.add(copyedClassName) 
-	            }, 200) 
-	        } else { 
+	        var value = sec?sec:target.innerText;
+	        copy(value,target)
+	    }
+	    //上面那个data-copy="true"是老写法，需要设置data-sec作为指定复制内容，故增加下述写法，一个data-copy即搞定。
+	    if(dataCopy!==null&&dataCopy!=="true"){
+	    	copy(dataCopy,target)
+	    }
+	}
+	const copy=(value,target)=>{
+		var copyedClassName = "ctc_copyed"
+	    textarea.value = value
+	    textarea.select();
+	    document.execCommand("Copy"); 
+		var classList = target.classList;
+	    if (classList.contains(copyedClassName)) { 
+	    	classList.remove(copyedClassName);
+	        setTimeout(function() { 
 	        	classList.add(copyedClassName) 
-	        } 
+	        }, 200) 
+	    } else { 
+	    	classList.add(copyedClassName) 
 	    } 
 	}
 })()
+
 
 Date.prototype.format = function(format) {
     var o = {
