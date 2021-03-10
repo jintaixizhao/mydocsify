@@ -101,6 +101,9 @@
         subMaxLevel: 1,
         name: '',
         /*search: {
+            maxAge: 86400000, // 过期时间，单位毫秒，默认一天
+            paths: 'auto', // or 'auto'
+            depth: 6,
             placeholder: '搜索',
             noData: '未找到结果'
         },*/
@@ -132,7 +135,7 @@
                     mermaid.init(undefined, '.mermaid');
                     //无图模式的切换
                     let showImage = localStorage.getItem("showImage"),
-                        imgs = document.querySelectorAll("img");
+                        imgs = document.querySelectorAll("img,video");
                     if(showImage == null){
                         imgs.forEach(i=>i.style.display="none")
                     }else{

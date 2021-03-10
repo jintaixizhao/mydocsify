@@ -11,7 +11,7 @@
 	}
 	function shiftMode(){
 		let showImage = localStorage.getItem("showImage")
-		let imgs = document.querySelectorAll("img")
+		let imgs = document.querySelectorAll("img,video")
 		if(showImage==null){
 			imgs.forEach(i=>i.style.display="inline")
 			localStorage.setItem("showImage","true")
