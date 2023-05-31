@@ -124,12 +124,9 @@
                 hook.beforeEach(function(md) {
                     const filePath = decodeURIComponent(vm.route.file);
                     //添加打开路径，由于将原服务集成于taotie中，所以无法再使用相对路径，故补全了绝对路径。
-                    const url = 'http://localhost:8464/open?url=E:/郭凡/PALACE/' + filePath
-                    const editBtn = `<span onclick="getURL('${url}')" class="edit-btn">&emsp;编辑本页</span>\n`
                     return md +
                         '\n----\n' +
-                        '最后更新 {docsify-updated}' +
-                        editBtn
+                        '最后更新 {docsify-updated}'
                 });
                 hook.doneEach(function() {
                     mermaid.init(undefined, '.mermaid');
